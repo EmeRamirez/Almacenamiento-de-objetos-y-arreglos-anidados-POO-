@@ -1,0 +1,99 @@
+body {
+    font-family: helvetica;
+}
+
+#header {
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    background-color: #F16F51;
+}
+
+h1 {
+    vertical-align: middle;
+    color: white;
+    font-weight: bold;
+}
+
+.row {
+    margin: 10px 20px;
+}
+
+#contenedor-lista-pacientes {
+    margin: 30px 20px 10px 0px;
+}
+
+.contenedor-panel{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 25px;
+}
+
+.card-paciente {
+    display: grid;
+    grid-template-columns: 15% 30% 35% 20%;
+    margin: 10px 0px;
+    padding: 10px;
+    width: 100%;
+    float: left;
+    background-color: #FDB45C;
+}
+
+.card-paciente img {
+    float: left;
+    margin-right: 20px;
+}
+
+.card-info {
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-paciente>button {
+    float: right;
+}
+
+#input-consultorio{
+    width: 123px;
+}
+
+.btnModificar {
+    margin-top: 16px;
+    height: 30px;
+    width: 100px;
+    border-radius: 5px;
+}
+
+#div-añadir-paciente{
+    display: none;
+    width: fit-content;
+    padding: 1vw;
+    border: 2px solid rgb(143, 139, 139);
+    border-radius: 5px;
+    gap: 5px;
+    justify-content: center;
+}
+
+#cont-card-btn{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 5px;
+    padding-right: 2vw;
+}
+
+.formdiag{
+    font-size: 0.9rem;
+    height: 2vw;
+    width: 20vw;
+}
+
+.subcont-diag{
+    display: none;
+    gap: 3px;
+}
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>CESFAM</title>
+    <link href="css/reset.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="header">
+        <h1>Base de Datos CESFAM</h1>
+    </div>
+
+    <div id="main">
+        <div class="contenedor-panel">
+            <div class="row">
+                <label>Consultorio:</label>
+                <select id="cesfam" onchange="renderPacientes()">
+                        <!-- <option value="F">Paciente</option> -->
+                </select>
+                <input type="text" id="input-consultorio">
+                <button onclick="agregarConsultorio()">Añadir</button>
+            </div>
+            <div class="row">
+                <label>Paciente:</label>
+                <input type="text" id="paciente" >
+                <button id="searchBtn">Buscar</button>
+                <button id="searchBtn" class="btnForm" onclick="mostrarForm()">Añadir</button>
+            </div>
+
+            <!-- Este div debería aparecer y desaparecer cambiando atributo hidden al presionar el boton añadir -->
+            <div id="div-añadir-paciente">
+                <form action="">
+                    <input type="text" id="form-nombre" placeholder="Nombre" required>
+                    <input type="text" id="form-rut" placeholder="RUT">
+                    <input type="text" id="form-edad" placeholder="Edad">
+                </form>
+                <button type="submit" onclick="agregarPaciente()">Añadir Nuevo</button>
+            </div>
+        </div>
+        <div id="contenedor-lista-pacientes">
+            
+        </div>
+        </div>
+    </div>
+
+
+    <script src="js/lib/jquery-3.6.3.min.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>
