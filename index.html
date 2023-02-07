@@ -18,15 +18,15 @@
             <div class="row">
                 <label>Consultorio:</label>
                 <select id="cesfam" onchange="renderPacientes()">
-                        <!-- <option value="F">Paciente</option> -->
+                        <!-- <option>Paciente</option> -->
                 </select>
                 <input type="text" id="input-consultorio">
                 <button onclick="agregarConsultorio()">Añadir</button>
             </div>
             <div class="row">
                 <label>Paciente:</label>
-                <input type="text" id="paciente" >
-                <button id="searchBtn">Buscar</button>
+                <input type="text" id="form-busqueda" >
+                <button onclick="buscarPaciente()" id="searchBtn">Buscar</button>
                 <button id="searchBtn" class="btnForm" onclick="mostrarForm()">Añadir</button>
             </div>
 
@@ -48,6 +48,8 @@
 
 
     <script src="js/lib/jquery-3.6.3.min.js"></script>
+    <script src="js/Consultorio.js"></script>
+    <script src="js/Paciente.js"></script>
     <script src="js/index.js"></script>
 </body>
 

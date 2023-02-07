@@ -6,7 +6,7 @@ body {
     text-align: center;
     height: 40px;
     line-height: 40px;
-    background-color: #F16F51;
+    background-color: #DF9986;
 }
 
 h1 {
@@ -38,7 +38,7 @@ h1 {
     padding: 10px;
     width: 100%;
     float: left;
-    background-color: #FDB45C;
+    background-color: #afc8e6;
 }
 
 .card-paciente img {
