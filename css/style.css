@@ -97,3 +97,16 @@ h1 {
     gap: 3px;
 }
 
+#sec-cesf{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:1vw;
+    font-weight: bold;
+}
+
+#sec-cesf img{
+    scale:calc(90%);
+    margin: 0;
+}

@@ -20,14 +20,34 @@ function respaldoLocal(){
     localStorage.setItem('consultorios',JSON.stringify(listaConsultorios));   
 }
 
-//Esta función espera la carga del documento y posteriormente busca un key en el localStorage y si lo encuentra, lo asigna al arreglo global.
-window.addEventListener("load", function(event) {
+//Esta función espera la carga del documento y posteriormente busca un key en el localStorage y si lo encuentra, vuelve a construir los objetos 'Consultorio' y los añade al arreglo global.
+window.addEventListener("load", function(event) { 
+
+
+    //Esta parte no es una solicitud de la tarea, sin embargo me era necesario generar permanencia en la BD que iba a ser construida a partir de mi app, por lo tanto aquí se vuelven a crear los objetos utilizando las variables almacenadas en Local Storage simulando el uso de funciones CRUD en BD.
+
     if (JSON.parse(localStorage.getItem("consultorios")) != null){
-        listaConsultorios = JSON.parse(localStorage.getItem("consultorios"));
+        listaLocal = JSON.parse(localStorage.getItem("consultorios"));
+       
+        listaLocal.forEach(function(el,index){
+           consultorio = new Consultorio (el.nombre);
+
+            el.pacientes.forEach(function(elem,ind){
+                paciente = new Paciente (elem.nombre , elem.rut , elem.edad);
+
+                elem.diagnostico.forEach(diag => {
+                    paciente.setDiagnostico(diag);
+                })
+                consultorio.setPaciente(paciente);
+            })
+
+           listaConsultorios.push(consultorio);
+        });
+        
         renderDOM();
-        }
+
+    }
 });
-//This function waits for the document load, then it search for a key from local storage to assing the content to the global array.
 
 
 
@@ -39,21 +59,26 @@ function renderDOM(){
         selectCesfam.innerHTML += `<option value="">${element.nombre}</option>`
     })
     renderPacientes();
-
 }
 
 
 //Esta función se encarga de añadir en el DOM las cartas de paciente respecto del respectivo consultorio que se tenga seleccionado
-function renderPacientes(){
+function renderPacientes(arr){
     contPacientes.innerHTML = '';
-
     pos = selectCesfam.selectedIndex;
 
+    if (arr == undefined){
+        arr = listaConsultorios[pos].listarPacientes()
+    };
+
     
-    listaConsultorios[pos].pacientes.forEach(function(element,index){
+    arr.forEach(function(element,index){
         contPacientes.innerHTML += ` 
             <div class="card-paciente" id="card-paciente-${index}">
-                <img src="img/diagnostico.png" />
+                <div id="sec-cesf">
+                    <img src="img/diagnostico.png" />
+                    <h6 id="nombre-cesf">${listaConsultorios[pos].nombre}</h6>
+                </div>
                 <div class="card-info">
                     <div id="card-nombre">Nombre: ${element.nombre}</div>
                     <div id="card-rut">RUT: ${element.rut}</div>
@@ -67,7 +92,7 @@ function renderPacientes(){
                 </div>
             </div>`;
 
-            let arr = listaConsultorios[pos].pacientes[index].diagnostico;
+            let arr = listaConsultorios[pos].listarPacientes()[index].listarDiagnosticos();
             
             arr.forEach(element => {
                 document.querySelector(`#card-diagnostico-${index}`).innerHTML += `
@@ -84,7 +109,7 @@ function renderPacientes(){
 function agregarDiag(index){
     let valor = document.querySelector(`#form-diag-${index}`);
     pos = selectCesfam.selectedIndex;
-    listaConsultorios[pos].pacientes[index].diagnostico.push(valor.value);
+    listaConsultorios[pos].listarPacientes()[index].setDiagnostico(valor.value);
     renderPacientes();
     respaldoLocal();
 }
@@ -109,7 +134,7 @@ function agregarConsultorio(){
             nuevoConsultorio = inputConsultorio.value;
             nuevoConsultorio = new Consultorio (nuevoConsultorio);
             listaConsultorios.push(nuevoConsultorio);
-            selectCesfam.selectedIndex = -1;
+            // selectCesfam.selectedIndex = -1;
             renderDOM();
             respaldoLocal();
             
@@ -124,25 +149,52 @@ function agregarConsultorio(){
 //Esta funcion crea un nuevo objeto de una determinada clase y luego lo añade en un arreglo. {66-71}
 function agregarPaciente() {
     pos = selectCesfam.selectedIndex;
+
+
+    //En esta parte se valida si el RUT ingresado ya existe dentro del CESFAM seleccionado.
     validator = true;
 
-    listaConsultorios[pos].pacientes.forEach(element => {
-        if (element.rut == formRUT.value){
-            validator = false;
-        }
+    listaConsultorios.forEach(el =>{
+        el.listarPacientes().forEach (ele => {
+            if (ele.rut == formRUT.value){
+                validator = false;
+            }
+        })
     })
 
+
     if (validator) {
-        formPaciente = new Paciente (formNombre,formRUT,formEdad);
-        listaConsultorios[pos].pacientes.push(formPaciente);
+        formPaciente = new Paciente (formNombre.value,formRUT.value*1,formEdad.value*1);
+        listaConsultorios[pos].setPaciente(formPaciente);
         respaldoLocal();
         renderPacientes();
     } else {
-        alert('Este paciente ya existe en este consultorio');
-    }
-
-    
+        alert('Este paciente ya existe la base de datos');
+    }   
 }
+
+
+//Esta función le pasa como parámetro un string al método de clase 'Consultorio' 'buscarPacienteNombre()' para que busque coincidencias en sus pacientes, si este devuelve un valor true, se le pasa el objeto a la función 'renderPacientes()' para que esta la muestre en el documento.
+function buscarPacientes(){
+    busqueda = formBusqueda.value.toLowerCase();
+    validador = false;
+   
+    listaConsultorios.forEach(function(el,index){
+        if (el.buscarPacienteNombre(busqueda) != undefined){
+        posicionpac = index;
+        pacienteRegistrado = [listaConsultorios[index].pacientes[el.buscarPacienteNombre(busqueda)]];
+        validador = true;
+        }
+    })
+
+    if (validador){
+        selectCesfam.selectedIndex = posicionpac;
+        renderPacientes(pacienteRegistrado);
+    } else {
+        alert ('El paciente no existe');
+    }
+}
+
 
 
 //Esta función muestra/oculta el formulario para añadir nuevos pacientes
@@ -169,79 +221,3 @@ function mostrarFormDiag(index){
 
 
 
-//Esta función busca un elemento dentro del consultorio seleccionado y renderiza el resultado en el contenedor del HTML
-function buscarPaciente(){
-    valor = formBusqueda.value.toLowerCase();
-    pos = selectCesfam.selectedIndex;
-
-    if (isNaN(valor)){
-        listaFiltrada = listaConsultorios[pos].pacientes.filter(element => element.nombre.toLowerCase() == valor);
-
-        if(listaFiltrada.length >= 1){
-        contPacientes.innerHTML = ` 
-            <div class="card-paciente">
-                <img src="img/diagnostico.png" />
-                <div class="card-info">
-                    <div id="card-nombre">Nombre: ${listaFiltrada[0].nombre}</div>
-                    <div id="card-rut">RUT: ${listaFiltrada[0].rut}</div>
-                    <div id="card-edad">Edad: ${listaFiltrada[0].edad}</div>
-                </div>
-                <div id="card-diagnostico">
-                </div>
-                <div id="cont-card-btn">
-                    <div></div>
-                    <div class="subcont-diag"><input class="formdiag" placeholder="Escriba aquí el diagnóstico"><button >Añadir</button></div>
-                </div>
-            </div>`;
-
-            let arr = listaFiltrada[0].diagnostico;
-            
-            arr.forEach(element => {
-                document.querySelector(`#card-diagnostico`).innerHTML += `
-                <li>${element}</li>`
-            })
-            
-        } else {
-            alert('Nombre no encontrado en este consultorio');
-        }
-    } else {
-        listaFiltrada = listaConsultorios[pos].pacientes.filter(element => element.rut == valor);
-
-        if(listaFiltrada.length >= 1){
-        contPacientes.innerHTML = ` 
-            <div class="card-paciente">
-                <img src="img/diagnostico.png" />
-                <div class="card-info">
-                    <div id="card-nombre">Nombre: ${listaFiltrada[0].nombre}</div>
-                    <div id="card-rut">RUT: ${listaFiltrada[0].rut}</div>
-                    <div id="card-edad">Edad: ${listaFiltrada[0].edad}</div>
-                </div>
-                <div id="card-diagnostico">
-                </div>
-                <div id="cont-card-btn">
-                    <div></div>
-                    <div class="subcont-diag"><input class="formdiag" placeholder="Escriba aquí el diagnóstico"><button >Añadir</button></div>
-                </div>
-            </div>`;
-
-            let arr = listaFiltrada[0].diagnostico;
-            console.log(arr);
-            
-            arr.forEach(element => {
-                document.querySelector(`#card-diagnostico`).innerHTML += `
-                <li>${element}</li>`
-            })
-
-        } else {
-            alert('RUT no encontrado en este consultorio');
-        }
-    }
-}
-
-
-
-
-//=============== hasta aquí llegué, el resto son pruebas ============================
-
-//{{ NOTAS }} : 
-//      Falta añadir un boton para eliminar un diagnóstico

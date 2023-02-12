@@ -1,35 +1,42 @@
-// export class Consultorio{
-//     nombre;
-//     pacientes = [];
-
-//     constructor(nombre){
-//         this.nombre = nombre;
-//     }
-
-//     function agregarPaciente(paciente){
-//         this.pacientes.push(paciente);
-//     }
-// }
-
-
 //Funcion para crear nuevo objeto de la clase 'Consultorio'
 function Consultorio(nombre){
-    this.nombre    = inputConsultorio.value;
-    this.pacientes  = [];
+    this.nombre    = nombre
+    this.pacientes  = []
+}
 
-    this.getNombre = function(){
+
+    Consultorio.prototype.getNombre = function(){
         return this.nombre;
     }
 
-    this.agregarPaciente = function(paciente){
+    Consultorio.prototype.setPaciente = function(paciente){
         this.pacientes.push(paciente);
     }
 
-    this.listarPacientes = function(){
+
+
+    Consultorio.prototype.listarPacientes = function(){
         return this.pacientes;
     }
 
-}
+    Consultorio.prototype.buscarPacienteNombre = function(busqueda){
+       
+        existe = false;
+
+        this.pacientes.forEach(function(el,index){   
+            // if (busqueda.toLowerCase() == el.nombre.toLowerCase()){
+            if ( el.nombre.toLowerCase().search(busqueda.toLowerCase()) !== -1 && busqueda.toLowerCase().length > 2){
+                encontrado = index;
+                existe = true;
+            }  
+        })
+
+
+        if (existe){
+            return encontrado;
+        }
+        
+    }
 
 
 
